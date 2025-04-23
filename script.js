@@ -89,8 +89,10 @@ function parseTTLFile(ttlContent) {
     // Fetch triples using comunicaQuery and pass them to displayTriples
     comunicaQuery(query, store)
       .then((triples) => {
-        doublesmashresults(smashresults(triples));
-        displayTriples(triples);
+        let smashed = smashresults(triples);
+        let doublesmashed = doublesmashresults(smashed);
+        displayReportResults(smashed, doublesmashed);
+        //displayTriples(triples);
       })
       .catch((error) => {
         console.error("Error fetching triples with comunicaQuery:", error);
@@ -168,43 +170,142 @@ function doublesmashresults(smashresults) {
   return double_smashed;
 }
 
-function displayReportResults(double_smashed) {
+function displayReportResults(smashed, double_smashed) {
   //get the id of the div where the results will be displayed
   const summaryDiv = document.getElementById("validationReportContent");
   summaryDiv.innerHTML = ""; // Clear existing content
   // table where the results will be displayed
-  const tableresultsbody = document.getElementById("reportTableBody");
-  tableresultsbody.innerHTML = ""; // Clear existing content
+  const tableresults = document.getElementById("reportTableBody");
+  tableresults.innerHTML = ""; // Clear existing content
 
   // Create a h3 element and insert the length of the double smashed array in it
   const h3 = document.createElement("h3");
   h3.textContent = `Validation Report: ${double_smashed.length} results`;
   summaryDiv.appendChild(h3);
 
+  // go over smashed and extract the number of times each predicate appears
+  // the predicate is the key http://www.w3.org/ns/shacl#resultPath
+  let predicate_count = {};
+  smashed.forEach((smashed) => {
+    //check if the predicate is already in the count object
+    const predicate = smashed["http://www.w3.org/ns/shacl#resultPath"];
+    if (predicate_count[predicate]) {
+      //if it is, increment the count
+      predicate_count[predicate]++;
+    } else {
+      //if it is not, add it to the count object
+      predicate_count[predicate] = 1;
+    }
+  });
+  console.log("Predicate count:", predicate_count);
+
+  // Create a table element based in the predicate count
+  const table = document.createElement("table");
+  // some styling for the table
+  table.setAttribute("border", "1");
+  table.setAttribute("style", "width: 100%; border-collapse: collapse;");
+  table.setAttribute("id", "predicateCountTable");
+  table.setAttribute("class", "table table-striped table-bordered");
+  // set table header to validated property and count
+  const headerRow = document.createElement("tr");
+  const headerCell1 = document.createElement("th");
+  headerCell1.textContent = "Validated Property";
+  const headerCell2 = document.createElement("th");
+  headerCell2.textContent = "Count";
+  headerRow.appendChild(headerCell1);
+  headerRow.appendChild(headerCell2);
+  table.appendChild(headerRow);
+  // iterate over the predicate count object and add a row for each predicate
+  for (const predicate in predicate_count) {
+    const row = document.createElement("tr");
+    const cell1 = document.createElement("td");
+    cell1.textContent = predicate;
+    const cell2 = document.createElement("td");
+    cell2.textContent = predicate_count[predicate];
+    row.appendChild(cell1);
+    row.appendChild(cell2);
+    table.appendChild(row);
+  }
+  // append the table to the summary div
+  summaryDiv.appendChild(table);
+
   // for each item in the double smashed array
   // add a row and populate it with the data
-}
+  //first create a table with a header focusNode and validationErrors
+  //Make the table first
+  const table2 = document.createElement("table");
+  // some styling for the table
+  table2.setAttribute("border", "1");
+  table2.setAttribute("style", "width: 100%; border-collapse: collapse;");
+  table2.setAttribute("id", "validationErrorsTable");
+  table2.setAttribute("class", "table table-striped table-bordered");
 
-// Execute SPARQL query using @comunica/query-sparql
-async function executeSPARQLQuery(query) {
-  if (!store) {
-    alert("The RDF store is not initialized. Please upload a .ttl file first.");
-    return;
-  }
+  const headerRow2 = document.createElement("tr");
+  const headerCell3 = document.createElement("th");
+  headerCell3.textContent = "Focus Node";
+  const headerCell4 = document.createElement("th");
+  headerCell4.textContent = "Validation Errors";
+  headerRow2.appendChild(headerCell3);
+  headerRow2.appendChild(headerCell4);
+  table2.appendChild(headerRow2);
 
-  const engine = newEngine();
-  const result = await engine.query(query, {
-    sources: [store],
+  double_smashed.forEach((double_smashed_item) => {
+    // create a new row
+    const row = document.createElement("tr");
+    // get the key of the object (the focusNode)
+    const focusNode = Object.keys(double_smashed_item)[0];
+    // create a cell for the focusNode
+    const cell1 = document.createElement("td");
+    cell1.textContent = focusNode;
+    row.appendChild(cell1);
+    // create a cell for the child list
+    const cell2 = document.createElement("td");
+    // iterate over the child list and add each item to the cell
+    double_smashed_item[focusNode].forEach((child) => {
+      const childDiv = document.createElement("div");
+      console.log("Child object:", child);
+      // Create a table for the child object
+      const childTable = document.createElement("table");
+      childTable.setAttribute("border", "1");
+      childTable.setAttribute(
+        "style",
+        "width: 100%; border-collapse: collapse;"
+      );
+      childTable.setAttribute("class", "table table-striped table-bordered");
+
+      // Create table header
+      const childHeaderRow = document.createElement("tr");
+      const childHeaderKey = document.createElement("th");
+      childHeaderKey.textContent = "Key";
+      const childHeaderValue = document.createElement("th");
+      childHeaderValue.textContent = "Value";
+      childHeaderRow.appendChild(childHeaderKey);
+      childHeaderRow.appendChild(childHeaderValue);
+      childTable.appendChild(childHeaderRow);
+
+      // Populate table rows with key-value pairs from the child object
+      Object.entries(child).forEach(([key, value]) => {
+        const childRow = document.createElement("tr");
+        const childKeyCell = document.createElement("td");
+        childKeyCell.textContent = key;
+        const childValueCell = document.createElement("td");
+        childValueCell.textContent = value;
+        childRow.appendChild(childKeyCell);
+        childRow.appendChild(childValueCell);
+        childTable.appendChild(childRow);
+      });
+
+      // Append the child table to the childDiv
+      childDiv.appendChild(childTable);
+
+      cell2.appendChild(childDiv);
+    });
+    row.appendChild(cell2);
+    // append the row to the table body
+    table2.appendChild(row);
   });
-
-  const bindings = await result.bindings();
-  const triples = bindings.map((binding) => ({
-    subject: binding.get("?s").value,
-    predicate: binding.get("?p").value,
-    object: binding.get("?o").value,
-  }));
-
-  displayTriples(triples);
+  // append the table to the summary div
+  tableresults.appendChild(table2);
 }
 
 // Display RDF triples in a table format

@@ -10,10 +10,10 @@ body {
 /* Header styling */
 header {
     text-align: center;
-    padding: 20px;
+    padding: 5px;
     background-color: #4CAF50;
     color: white;
-    font-size: 2em;
+    font-size: 1em;
     font-weight: bold;
 }
 

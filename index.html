@@ -9,7 +9,7 @@
     <script src="dist/bundle.js" type="module"></script>
 </head>
 <body>
-    <div id="loader" style="display: none;">Loading Validation report into memory. Have some damn patience...</div>
+    <div id="loader" style="display: none;">Loading Validation report into memory. This can take a minute...</div>
     <header>
         <h1>SHACL validation report viewer</h1>
     </header>
@@ -25,9 +25,7 @@
                 <!-- Validation report content will be dynamically inserted here -->
             </div>
             <table>
-                <tbody id="reportTableBody">
-                    <!-- summary of the report here -->
-                </tbody>
+                <div id="reportTableBody"></div>
             </table>
         </section>
         <!--
