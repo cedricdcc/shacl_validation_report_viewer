@@ -1,0 +1,30 @@
+{
+  "name": "shacl_validation_report_viewer",
+  "version": "1.0.0",
+  "description": "a HTML way to load in and view a shacl validation report in ttl",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cedricdcc/shacl_validation_report_viewer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cedricdcc/shacl_validation_report_viewer/issues"
+  },
+  "homepage": "https://github.com/cedricdcc/shacl_validation_report_viewer#readme",
+  "dependencies": {
+    "@comunica/query-sparql": "^4.1.0",
+    "rdflib": "^2.2.37"
+  },
+  "devDependencies": {
+    "nodemon-webpack-plugin": "^4.8.2",
+    "webpack": "^5.99.6",
+    "webpack-cli": "^6.0.1"
+  }
+}

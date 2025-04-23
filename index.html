@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDF Triple Visualizer & Query Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="node_modules/rdflib/dist/rdflib.min.js" defer></script>
+    <script src="dist/bundle.js" type="module"></script>
+</head>
+<body>
+    <div id="loader" style="display: none;">Loading Validation report into memory. Have some damn patience...</div>
+    <header>
+        <h1>SHACL validation report viewer</h1>
+    </header>
+    <main>
+        <section id="file-upload">
+            <h2>Upload shacl validation report</h2>
+            <input type="file" id="ttlFileInput" accept=".ttl">
+        </section>
+
+        <section id="validation_report">
+            <h2>Validation report</h2>
+            <div id="validationReportContent">
+                <!-- Validation report content will be dynamically inserted here -->
+            </div>
+            <table>
+                <tbody id="reportTableBody">
+                    <!-- summary of the report here -->
+                </tbody>
+            </table>
+        </section>
+        <!--
+        <section id="rdf-table">
+            <h2>Parsed RDF Triples</h2>
+            <table>
+                <tbody id="rdfTriplesTableBody">
+                </tbody>
+            </table>
+        </section>
+       
+        <section id="sparql-query">
+            <h2>Run SPARQL Query</h2>
+            <textarea id="sparqlQueryInput" placeholder="SELECT ?s ?p ?o WHERE { ?s <http://www.w3.org/ns/shacl#result> ?o} LIMIT 50" ></textarea>
+            <button id="runQueryButton">Run Query</button>
+            <div id="queryResults">
+            </div>
+        </section>
+        <section id="graph-visualization">
+            <h2>Graph Visualization</h2>
+            <div id="graphPlaceholder">
+            </div>
+        </section>
+         -->
+    </main>
+    <footer>
+        <p>&copy; 2025 RDF Tool</p>
+    </footer>
+</body>
+</html>
